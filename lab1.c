@@ -18,7 +18,7 @@ struct arrayContainer generateArray(int dimensions[]){
         _capacity = _capacity * dimensions[i];
     }
 
-    static int * _created_array;
+    static int * _created_array; // Creates a pointer to a block of memory on the heap
     _created_array =(int*)malloc(_capacity * sizeof(int));
 
     for (int i = 0; i < _capacity; i++)
@@ -66,7 +66,7 @@ struct arrayContainer uniformRandomOne(struct arrayContainer arrayInfo, int dime
 }
 
 int main() {
-        int _dimensions[]={50,50};
+        int _dimensions[]={50,50,50};
         struct arrayContainer _generated_array = generateArray(_dimensions);
         _generated_array = initializeZero(_generated_array);
         _generated_array = uniformOne(_generated_array);
