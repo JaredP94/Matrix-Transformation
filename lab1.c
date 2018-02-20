@@ -100,15 +100,10 @@ struct arrayContainer uniformRandomOne(struct arrayContainer arrayInfo, int dime
 
 int main() {
         int _dimensions[]={500,500,500};
-        clock_t begin = clock();
         struct arrayContainer _generated_array = generateArray(_dimensions);
         _generated_array = initializeZero(_generated_array);
         _generated_array = uniformOne(_generated_array);
         _generated_array = uniformRandomOne(_generated_array, _dimensions);
-            clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("Time spent %f", time_spent);
-    printf("\n");
             /* Free the memory we allocated */
         free(_generated_array._array_ptr);
 
