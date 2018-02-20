@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include "omp.h"
 
@@ -102,10 +103,7 @@ struct arrayContainer uniformRandomOne(struct arrayContainer arrayInfo, int dime
     }
 
     // Initialise coord array
-    for (int i = 0; i < arrayInfo._number_of_dimensions; i++)
-    {
-        _array_coordinates[i] = 0;
-    }
+    memset(_array_coordinates, 0, sizeof arrayInfo._number_of_dimensions);
 
     // Calculate coords based on index from 1D array
     printf("Format = [coords] : [value] \n");
@@ -130,13 +128,7 @@ struct arrayContainer uniformRandomOne(struct arrayContainer arrayInfo, int dime
             printf("%d ", _array_coordinates[k]);
         }
 
-        printf(" ] : [ %d ]", arrayInfo._array_ptr[_random_index + i * _spacing]);
-
-        for (int l = 0; l <= arrayInfo._number_of_dimensions; l++)
-        {
-            _array_coordinates[l] = 0;
-        }
-        printf("\n");
+        printf(" ] : [ %d ] \n", arrayInfo._array_ptr[_random_index + i * _spacing]);
     }
 
     return arrayInfo;
