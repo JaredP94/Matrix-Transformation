@@ -3,6 +3,7 @@
 #include <time.h>
 #include "omp.h"
 
+#define CHUNKSIZE 1000
 struct arrayContainer
 {
     int * _array_ptr;
@@ -21,10 +22,33 @@ struct arrayContainer generateArray(int dimensions[]){
     static int * _created_array; // Creates a pointer to a block of memory on the heap
     _created_array =(int*)malloc(_capacity * sizeof(int));
 
-    for (int i = 0; i < _capacity; i++)
+    // If the array cannot be created, exit the program
+    if (_created_array == NULL)
     {
-        _created_array[i] = rand() % 10;
+        printf("Could not allocate required memory\n");
+        exit(1);
     }
+
+    int chunk = CHUNKSIZE;
+
+    clock_t begin = clock();
+    #pragma omp parallel // Start of parallel region
+    {
+        #pragma omp for nowait
+        for (int i = 0; i < _capacity; i++)
+        {
+            _created_array[i] = rand() % 10;
+              // printf("\n %i ",omp_get_thread_num()); // see the thread ID associated with each loop iteration
+        }
+    } // End of parallel region
+
+    // Timing the code
+    /*
+    clock_t end = clock();
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("Time spent %f", time_spent);
+    printf("\n");
+    */
 
     struct arrayContainer arrayInfo = {_created_array, _capacity};
 
@@ -66,9 +90,14 @@ struct arrayContainer uniformRandomOne(struct arrayContainer arrayInfo, int dime
 }
 
 int main() {
-        int _dimensions[]={50,50,50};
+        int _dimensions[]={500,500,500};
         struct arrayContainer _generated_array = generateArray(_dimensions);
         _generated_array = initializeZero(_generated_array);
         _generated_array = uniformOne(_generated_array);
         _generated_array = uniformRandomOne(_generated_array, _dimensions);
+
+            /* Free the memory we allocated */
+        free(_generated_array._array_ptr);
+
+        return 0;
 }
