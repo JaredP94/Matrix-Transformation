@@ -3,7 +3,7 @@
 #include <time.h>
 #include "omp.h"
 
-#define CHUNKSIZE 1000
+#define CHUNKSIZE 100
 struct arrayContainer
 {
     int * _array_ptr;
@@ -31,10 +31,10 @@ struct arrayContainer generateArray(int dimensions[]){
 
     int chunk = CHUNKSIZE;
 
-    clock_t begin = clock();
-    #pragma omp parallel // Start of parallel region
+    //clock_t begin = clock();
+    #pragma omp parallel shared(_created_array,chunk)// Start of parallel region
     {
-        #pragma omp for nowait
+        #pragma omp for schedule(dynamic,chunk)
         for (int i = 0; i < _capacity; i++)
         {
             _created_array[i] = rand() % 10;
@@ -56,9 +56,14 @@ struct arrayContainer generateArray(int dimensions[]){
 }
 
 struct arrayContainer initializeZero(struct arrayContainer arrayInfo){
-    for (int i = 0; i < arrayInfo._array_capacity; i++)
+    int chunk = CHUNKSIZE;
+    #pragma omp parallel shared(arrayInfo,chunk)// Start of parallel region
     {
-        arrayInfo._array_ptr[i] = 0;
+        #pragma omp for schedule(dynamic,chunk)
+        for (int i = 0; i < arrayInfo._array_capacity; i++)
+        {
+            arrayInfo._array_ptr[i] = 0;
+        }
     }
 
     return arrayInfo;
@@ -67,10 +72,14 @@ struct arrayContainer initializeZero(struct arrayContainer arrayInfo){
 struct arrayContainer uniformOne(struct arrayContainer arrayInfo){
     int _amount_to_set = arrayInfo._array_capacity / 10;
     int _spacing = arrayInfo._array_capacity / _amount_to_set;
-
-    for (int i = 0; i < _amount_to_set; i++)
+    int chunk = CHUNKSIZE;
+    #pragma omp parallel shared(arrayInfo,chunk) // Start of parallel region
     {
-        arrayInfo._array_ptr[i * _spacing] = 1;
+        #pragma omp for schedule(dynamic,chunk)
+        for (int i = 0; i < _amount_to_set; i++)
+        {
+            arrayInfo._array_ptr[i * _spacing] = 1;
+        }
     }
 
     return arrayInfo;
@@ -91,11 +100,15 @@ struct arrayContainer uniformRandomOne(struct arrayContainer arrayInfo, int dime
 
 int main() {
         int _dimensions[]={500,500,500};
+        clock_t begin = clock();
         struct arrayContainer _generated_array = generateArray(_dimensions);
         _generated_array = initializeZero(_generated_array);
         _generated_array = uniformOne(_generated_array);
         _generated_array = uniformRandomOne(_generated_array, _dimensions);
-
+            clock_t end = clock();
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("Time spent %f", time_spent);
+    printf("\n");
             /* Free the memory we allocated */
         free(_generated_array._array_ptr);
 
