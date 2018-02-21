@@ -71,7 +71,6 @@ struct arrayContainer uniformOne(struct arrayContainer arrayInfo)
 
 bool isValueInArray(int array[], int value, int array_size)
 {
-    if (array_size == 1) return false;
     for (int i = 0; i < array_size - 1; i++)
     {
         if (array[i] == value){
@@ -90,6 +89,7 @@ struct arrayContainer uniformRandom(struct arrayContainer arrayInfo, int dimensi
     int * _dimension_capacity_array = (int*)malloc(arrayInfo._array_capacity * sizeof(int));
     int * _array_coordinates = (int*)malloc(arrayInfo._array_capacity * sizeof(int));
     int _dimension_capacity = 1;
+    const int _index_increment = 1;
 
     // Calculate uniform random indices
     for (int i = 0; i < _amount_to_print; i++)
@@ -130,7 +130,7 @@ struct arrayContainer uniformRandom(struct arrayContainer arrayInfo, int dimensi
 
         _array_coordinates[0] = _target_index;
 
-        printf("Iteration %d: [ ", i+1);
+        printf("Iteration %d: [ ", i+_index_increment);
         for (int k = 0; k < arrayInfo._number_of_dimensions; k++)
         {
             printf("%d ", _array_coordinates[k]);
