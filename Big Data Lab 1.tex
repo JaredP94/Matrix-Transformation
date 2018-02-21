@@ -137,13 +137,27 @@ In order to use the PThreads library, the code must be written specifically for 
 However, the use of the PThreads library allows the developer extensive control over all aspects of the program.
 
 \section{Problem Solution}
-In order to bypass the problem of requiring a \texttt{for} loop for each dimension of the array, the K-dimensional array with bounds \textit{N$_0$, N$_1$,...N$_{k-1}$} was converted into a one-dimensional (1D) array, with the number of elements (N) determined by Equation \ref{noOfElements}.
+
+\subsection{Matrix Generation}
+In order to bypass the problem of requiring a \texttt{for} loop for each dimension of the array, the K-dimensional array with bounds \textit{N$_0$, N$_1$,...N$_{k-1}$} was converted into a one-dimensional (1D) array, with the number of elements (N) determined by Equation \ref{noOfElements}. The memory for the array was allocated on the heap using \texttt{malloc()}. The memory for the array was created such that it could hold N integer values.
 
 \begin{equation}
 N = \prod_{n=0}^{k-1}N_{n}
 \label{noOfElements}
 \end{equation}
 
+\subsection{Procedure 1}
+Since the K-dimensional array was converted into a 1D array, a simple \texttt{for} loop was used to set the values in the array to zero. The loop spans from 0 to N (as defined in Equation \ref{noOfElements}), and sets the value of the array at the corresponding index to zero. This loop is performed in parallel using static scheduling, since each loop takes a uniform amount of time \cite{HPC}.
+
+\subsection{Procedure 2}
+In this procedure, the value of 10\% of the elements in the array is set uniformly to 1. The assumption made was that starting at the first element of the 1D array, every tenth element is set to 1. This means that there is a uniform spacing of 9 elements between every two entries with a value of 1. This loop was also run in parallel, using static scheduling. 
+
+\subsection{Procedure 3}
+Since 5\% of the elements must be selected, it is necessary to calculate the number of data points to be printed. In order to do this, N is divided by 20.
+
+A random number is then generated between 0 and N-1. This random number acts as the index in the 1D array of the value that should be printed. This index is then added to an array containing all the randomly generated indices. In order to ensure that one element is not printed multiple times, as each random index is generated, it is compared to each other index. If the two indices are the same, a new random number is generated and the process is repeated for the number of data points required.
+
+Once the index is calculated, the set of coordinates corresponding to the index must be calculated. A column-major indexing approach was used, as it simplified the implementation \cite{HPC}. This choice incurs no performance loss, since the input array to the function is one-dimensional (as created in the matrix generation procedure). However, if operations were required on a multidimensional array that had not been converted into a one-dimensional array, a row-major indexing scheme should be used in C, as the use thereof allows for stride-one access between entries in the array \cite{HPC}. This drastically improves performance for large matrices \cite{HPC}. Based on the column major indexing, the coordinates were calculated as follows:
 
 
 \section{Conclusion}
