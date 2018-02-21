@@ -136,6 +136,16 @@ In order to use the PThreads library, the code must be written specifically for 
 \subsubsection{Advantages}
 However, the use of the PThreads library allows the developer extensive control over all aspects of the program.
 
+\section{Problem Solution}
+In order to bypass the problem of requiring a \texttt{for} loop for each dimension of the array, the K-dimensional array with bounds \textit{N$_0$, N$_1$,...N$_{k-1}$} was converted into a one-dimensional (1D) array, with the number of elements (N) determined by Equation \ref{noOfElements}.
+
+\begin{equation}
+N = \prod_{n=0}^{k-1}N_{n}
+\label{noOfElements}
+\end{equation}
+
+
+
 \section{Conclusion}
 
 \bibliographystyle{witseie}
