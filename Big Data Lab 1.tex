@@ -131,10 +131,29 @@
 PThreads is a standardized model for dividing a program into parallel tasks \cite{pthreads}. PThreads was defined by the IEEE POSIX operating system interface standards \cite{pthreads}. The PThreads library specifies the interface to manage the actions required by threads \cite{pthreadVSopen}.
 
 \subsubsection{Disadvantages}
+%~\\
+%~\\
 In order to use the PThreads library, the code must be written specifically for the library \cite{pthreadVSopen}. This involves the use of PThread specific functions and data structures. The implication of this is that once the library has been used, the application is inherently casted as a threaded model \cite{pthreadVSopen}. Furthermore, since the API is very low level, large amounts of complex code is required to perform simple threading tasks \cite{pthreadVSopen}. The developer is also required to control all stages of the threading process, such as implicitly stating the number of threads and terminating them after the parallel block has executed \cite{pthreadVSopen}.
 
 \subsubsection{Advantages}
-However, the use of the PThreads library allows the developer extensive control over all aspects of the program.
+%~\\
+%~\\
+Owing to the inherently low-level API of the PThreads library, extensive control over all aspects of the program is provided~\cite{pthreadVSopen}. This is advantageous in applications which require low-level control.
+
+\subsection{OpenMP Library}
+The OpenMP library was developed to provide an API which could run the same code base, equally well, across a range of operating systems~\cite{pthreadVSopen}. The OpenMP library takes the form of a set of compiler directives (pragmas) which are operating system-specific~\cite{pthreadVSopen}. Through the sensible use of OpenMP pragmas, a single threaded program can be parallelised while maintaining its serial structure~\cite{kuhn2000openmp,pthreadVSopen}.
+
+\subsubsection{Advantages}
+%~\\
+%~\\
+If a compiler does not recognise an OpenMP pragma it is ignored~\cite{HPC}. As a result, a level of security exists where code containing these library-specific directives can be compiled by a different toolset, without concerns of it breaking~\cite{pthreadVSopen}. Additionally, by disabling support for OpenMP, the code can be compiled as a single-threaded program and debugged with relative ease~\cite{pthreadVSopen}.
+
+Unlike PThreads, OpenMP does not lock the software into a set number of threads for a particular application. In this way the number of threads is determined at run-time and can be scaled according to hardware availability~\cite{pthreadVSopen}.
+
+\subsubsection{Disadvantages}
+%~\\
+%~\\
+If a finer level of control is required, developers can access OpenMp's threading API. At this level, the functionality provided by the OpenMP API is a small in comparison to that of PThreads~\cite{pthreadVSopen}. A far smaller range of primitive functions exist which are needed to achieve a fine-grained level of control~\cite{pthreadVSopen}.
 
 \section{Problem Solution}
 
