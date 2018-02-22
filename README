@@ -1,0 +1,24 @@
+To access our github repository, one of two urls can be used.
+
+HTTP  	https://github.com/JaredP94/elen4020-lab1.git
+SSH  	git@github.com:JaredP94/elen4020-lab1.git
+
+---------------------------------------------------------------------------
+BRANCHES:
+
+Solution  	Contains the code implementation for lab exercise 1 in a 
+		file, lab1.c.
+		
+		lab1.c can be compiled as follows:
+		gcc lab1.c -o lab1
+
+		lab1.c can thereafter be run as follows:
+		./lab1
+
+Documentation 	Contains the .tex and .pdf files of our report for lab 
+		exercise 1.
+
+Master		Contains content of merged branches in relevant folders:
+		Code: code related files
+		Docs: documentation related files
+
