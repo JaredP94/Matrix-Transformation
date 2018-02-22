@@ -206,12 +206,12 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 %------------------------------------------------------------------------------
 			
 			\Function{generateArray}{dimensions, dimension\textunderscore length}
-			\State capacity == 1;
-			\State srand(time(NULL));
+			\State capacity == 1
+			\State srand(time(NULL))
 			\For{i = 0 to dimension\textunderscore length} 
-			\State capacity = capacity * dimensions[i];
+			\State capacity = capacity * dimensions[i]
 			\EndFor
-			\State created\textunderscore array = malloc(capacity * sizeof(int));
+			\State created\textunderscore array = malloc(capacity * sizeof(int))
 			\If{created\textunderscore array is equal to null}
 			\State catch error
 			\EndIf
@@ -224,7 +224,7 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
 			\For{i = 0 to capacity} 
 			\State \verb|#pragma omp for schedule(dynamic,chunk)|
-			\State created\textunderscore array = rand() \% 10;
+			\State created\textunderscore array = rand() \% 10
 			\EndFor
 			\State \Return arrayInfo \\
 			%\EndProcedure \\
@@ -242,7 +242,7 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
 			\For{i = 0 to arrayInfo.array\textunderscore capacity} 
 			\State \verb|#pragma omp for schedule(dynamic,chunk)|
-			\State  arrayInfo.\textunderscore array\textunderscore ptr[i] = 0;
+			\State  arrayInfo.\textunderscore array\textunderscore ptr[i] = 0
 			\EndFor
 			\EndFunction
 			\State \Return arrayInfo \\
@@ -257,13 +257,13 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 	\begin{algorithmic}
 			%\Procedure{arrayContainer}{}\Comment{}
 			\Function{uniformOne}{arrayContainer, arrayInfo}
-			\State amount\textunderscore to\textunderscore set $\leftarrow$ arrayInfo.\textunderscore array\textunderscore capacity / 10;
-			\State spacing $\leftarrow$ arrayInfo.array/amount\textunderscore to\textunderscore set;
+			\State amount\textunderscore to\textunderscore set $\leftarrow$ arrayInfo.\textunderscore array\textunderscore capacity / 10
+			\State spacing == 10
 			\State chunk $\leftarrow$ CHUNKSIZE
 			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
 			\For{i = 0 to amount\textunderscore to\textunderscore set} 
 			\State \verb|#pragma omp for schedule(dynamic,chunk)|
-			\State arrayInfo.array\textunderscore ptr[i * spacing] == 1;
+			\State arrayInfo.array\textunderscore ptr[i * spacing] == 1
 			\EndFor
 			\EndFunction
 			\State \Return arrayInfo \\
@@ -280,26 +280,42 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 \begin{algorithm}[htbp]
 	\begin{algorithmic}
 		%\Procedure{arrayContainer}{}\Comment{}
+		\Function{isValueInArray}{array[], value, array\textunderscore size}
+		\For{i = 0 to array\textunderscore size}
+		\If{array[i] == value}
+		\State \Return True
+		\EndIf
+		\State \Return False
+		\EndFor
+		\EndFunction \\
+		
 		\Function{uniformRandom}{arrayContainer, arrayInfo}
-		\State amount\textunderscore to\textunderscore print $\leftarrow$ arrayInfo.array\textunderscore capacity / 20;
-		\State spacing $\leftarrow$ arrayInfo.array/amount\textunderscore to\textunderscore print;
-		\State random\textunderscore index $\leftarrow$ rand() % dimensions[0];
-		\State dimension\textunderscore capacity\textunderscore array $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int));
-		\State array\textunderscore coordinates $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int));
-		\State dimension\textunderscore capacity == 1;
+		\State amount\textunderscore to\textunderscore print $\leftarrow$ arrayInfo.array\textunderscore capacity / 20
+		\State random\textunderscore indices[amount\textunderscore to\textunderscore print];
+		\State spacing == 20
+		\State random\textunderscore index $\leftarrow$ rand() \% dimensions[0]
+		\State dimension\textunderscore capacity\textunderscore array $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int))
+		\State array\textunderscore coordinates $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int))
+		\State dimension\textunderscore capacity == 1
+		\For{i =0 to amount\textunderscore to\textunderscore print}
+		\While{isValueInArray(random\textunderscore indices, random\textunderscore index, i) == true}
+		\State random\textunderscore index $\leftarrow$ rand() \% arrayInfo.array\textunderscore capacity
+		\State random\textunderscore indices[i] $\leftarrow$ random\textunderscore index;
+		\EndWhile
+		\EndFor
 		\For{i = 0 to arrayinfo.number\textunderscore of\textunderscore dimensions} 
-		\State dimension\textunderscore capacity\textunderscore array[i] $\leftarrow$ dimension\textunderscore capacity *  dimensions[i];
-		\State dimension\textunderscore capacity $\leftarrow$ dimension\textunderscore capacity * dimensions[i];
+		\State dimension\textunderscore capacity\textunderscore array[i] $\leftarrow$ dimension\textunderscore capacity *  dimensions[i]
+		\State dimension\textunderscore capacity $\leftarrow$ dimension\textunderscore capacity * dimensions[i]
 		\EndFor
 		\Function{memset}{array\textunderscore coordinates, 0, sizeof arrayInfo.number\textunderscore of\textunderscore dimensions}
 		\EndFunction
 		\State print Format = [coords] : [value]
 		\For{i = 0 to amount\textunderscore to\textunderscore print}
-		\State target\textunderscore index $\leftarrow$ random\textunderscore index + i * spacing;
+		\State target\textunderscore index $\leftarrow$ random\textunderscore index + i * spacing
 		\For{j = arrayInfo.number\textunderscore of\textunderscore dimensions to 0}
 		\If{target\textunderscore index/dimension\textunderscore capacity\textunderscore array[j-1] 	$>$ 0}
-		\State array\textunderscore coordinates[j] $\leftarrow$ target\textunderscore index/dimension\textunderscore capacity\textunderscore array[j-1];
-		\State target\textunderscore index $\leftarrow$ target\textunderscore index - (array\textunderscore coordinates[j] $\times$ \textunderscore dimension\textunderscore capacity\textunderscore array[j-1]);
+		\State array\textunderscore coordinates[j] $\leftarrow$ target\textunderscore index/dimension\textunderscore capacity\textunderscore array[j-1]
+		\State target\textunderscore index $\leftarrow$ target\textunderscore index - (array\textunderscore coordinates[j] $\times$ \textunderscore dimension\textunderscore capacity\textunderscore array[j-1])
 		\EndIf
 		\State array\textunderscore coordinates[0] $\leftarrow$ target\textunderscore index;
 		\EndFor
