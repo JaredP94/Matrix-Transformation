@@ -138,12 +138,14 @@ N = \prod_{n=0}^{k-1}N_{n}
 \end{equation}
 
 \subsection{Procedure 1}
-Since the K-dimensional array was converted into a 1D array, a simple \texttt{for} loop was used to set the values in the array to zero. The loop spans from 0 to N (as defined in Equation \ref{noOfElements}), and sets the value of the array at the corresponding index to zero. This loop is performed in parallel using static scheduling, since each loop takes a uniform amount of time \cite{HPC}.
+Since the K-dimensional array was converted into a 1D array, a simple \texttt{for} loop was used to set the values in the array to zero. The loop spans from 0 to N (as defined in Equation \ref{noOfElements}), and sets the value of the array at the corresponding index to zero. 
+%This loop is performed in parallel using static scheduling, since each loop takes a uniform amount of time \cite{HPC}.
 
 The pseudo-code for this procedure can be found in Algorithm \ref{alg:1}.
 
 \subsection{Procedure 2}
-In this procedure, the value of 10\% of the elements in the array is set uniformly to 1. The assumption made was that starting at the first element of the 1D array, every tenth element is set to 1. This means that there is a uniform spacing of 9 elements between every two entries with a value of 1. This was achieved using a \texttt{for} loop. This loop was also run in parallel, using static scheduling. 
+In this procedure, the value of 10\% of the elements in the array is set uniformly to 1. The assumption made was that starting at the first element of the 1D array, every tenth element is set to 1. This means that there is a uniform spacing of 9 elements between every two entries with a value of 1. This was achieved using a \texttt{for} loop. 
+%This loop was also run in parallel, using static scheduling. 
 
 The pseudo code for this procedure can be found in Algorithm \ref{alg:2}.
 
