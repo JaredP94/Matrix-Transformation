@@ -124,43 +124,13 @@
 \pagestyle{plain}
 \setcounter{page}{1}
 
-\section{Introduction}
-
-
-\section{PThread and OpenMP Libraries}
-
-\subsection{PThread Library}
-PThreads is a standardized model for dividing a program into parallel tasks \cite{pthreads}. PThreads was defined by the IEEE POSIX operating system interface standards \cite{pthreads}. The PThreads library specifies the interface to manage the actions required by threads \cite{pthreadVSopen}.
-
-\subsubsection{Disadvantages}
-%~\\
-%~\\
-In order to use the PThreads library, the code must be written specifically for the library \cite{pthreadVSopen}. This involves the use of PThread specific functions and data structures. The implication of this is that once the library has been used, the application is inherently casted as a threaded model \cite{pthreadVSopen}. Furthermore, since the API is very low level, large amounts of complex code is required to perform simple threading tasks \cite{pthreadVSopen}. The developer is also required to control all stages of the threading process, such as implicitly stating the number of threads and terminating them after the parallel block has executed \cite{pthreadVSopen}.
-
-\subsubsection{Advantages}
-%~\\
-%~\\
-Owing to the inherently low-level API of the PThreads library, extensive control over all aspects of the program is provided~\cite{pthreadVSopen}. This is advantageous in applications which require low-level control.
-
-\subsection{OpenMP Library}
-The OpenMP library was developed to provide an API which could run the same code base, equally well, across a range of operating systems~\cite{pthreadVSopen}. The OpenMP library takes the form of a set of compiler directives (pragmas) which are operating system-specific~\cite{pthreadVSopen}. Through the sensible use of OpenMP pragmas, a single threaded program can be parallelised while maintaining its serial structure~\cite{kuhn2000openmp,pthreadVSopen}.
-
-\subsubsection{Advantages}
-%~\\
-%~\\
-If a compiler does not recognise an OpenMP pragma it is ignored~\cite{HPC}. As a result, a level of security exists where code containing these library-specific directives can be compiled by a different toolset, without concerns of it breaking~\cite{pthreadVSopen}. Additionally, by disabling support for OpenMP, the code can be compiled as a single-threaded program and debugged with relative ease~\cite{pthreadVSopen}.
-
-Unlike PThreads, OpenMP does not lock the software into a set number of threads for a particular application. In this way the number of threads is determined at run-time and can be scaled according to hardware availability~\cite{pthreadVSopen}.
-
-\subsubsection{Disadvantages}
-%~\\
-%~\\
-If a finer level of control is required, developers can access OpenMp's threading API. At this level, the functionality provided by the OpenMP API is a small in comparison to that of PThreads~\cite{pthreadVSopen}. A far smaller range of primitive functions exist which are needed to achieve a fine-grained level of control~\cite{pthreadVSopen}.
-
 \section{Problem Solution}
+In order to avoid repetition in calculating the capacity of the matrix, a \texttt{struct} was created which holds the one-dimensional array, the capacity of the array and the number of dimensions in the required matrix. This \texttt{struct} acts as the input to procedures one and two. Procedure three take the \texttt{struct} as an input as well as an array containing the dimensions of the original matrix.
 
 \subsection{Matrix Generation}
 In order to bypass the problem of requiring a \texttt{for} loop for each dimension of the array, the K-dimensional array with bounds \textit{N$_0$, N$_1$,...N$_{k-1}$} was converted into a one-dimensional (1D) array, with the number of elements (N) determined by Equation \ref{noOfElements}. The memory for the array was allocated on the heap using \texttt{malloc()}. The memory for the array was created such that it could hold N integer values.
+
+Algorithm \ref{alg:0} contains the pseudo-code for the matrix generation.
 
 \begin{equation}
 N = \prod_{n=0}^{k-1}N_{n}
@@ -170,8 +140,12 @@ N = \prod_{n=0}^{k-1}N_{n}
 \subsection{Procedure 1}
 Since the K-dimensional array was converted into a 1D array, a simple \texttt{for} loop was used to set the values in the array to zero. The loop spans from 0 to N (as defined in Equation \ref{noOfElements}), and sets the value of the array at the corresponding index to zero. This loop is performed in parallel using static scheduling, since each loop takes a uniform amount of time \cite{HPC}.
 
+The pseudo-code for this procedure can be found in Algorithm \ref{alg:1}.
+
 \subsection{Procedure 2}
 In this procedure, the value of 10\% of the elements in the array is set uniformly to 1. The assumption made was that starting at the first element of the 1D array, every tenth element is set to 1. This means that there is a uniform spacing of 9 elements between every two entries with a value of 1. This was achieved using a \texttt{for} loop. This loop was also run in parallel, using static scheduling. 
+
+The pseudo code for this procedure can be found in Algorithm \ref{alg:2}.
 
 \subsection{Procedure 3}
 Since 5\% of the elements must be selected, it is necessary to calculate the number of data points to be printed. In order to do this, N is divided by 20.
@@ -186,9 +160,7 @@ Once the index is calculated, the set of coordinates corresponding to the index 
 	\item Print the coordinates from least significant to most significant
 \end{enumerate}
 
-This process is expanded upon using the sudo code in Appendix TODO:Fill in appendix.
-
-\section{Conclusion}
+This process is expanded upon using the pseudo-code in Algorithm \ref{alg:3}.
 
 \bibliographystyle{witseie}
 \bibliography{dataLab1}
@@ -206,7 +178,7 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 %------------------------------------------------------------------------------
 			
 			\Function{generateArray}{dimensions, dimension\textunderscore length}
-			\State capacity == 1
+			\State capacity = 1
 			\State srand(time(NULL))
 			\For{i = 0 to dimension\textunderscore length} 
 			\State capacity = capacity * dimensions[i]
@@ -215,18 +187,11 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			\If{created\textunderscore array is equal to null}
 			\State catch error
 			\EndIf
-			\EndFunction
-			\State \Return ArrayContainer \\
-			
-%------------------------------------------------------------------------------			
-			%\Procedure{arrayInfo}{created\textunderscore array, \textunderscore capacity, dimension\textunderscore length}\Comment{}
-			\State chunk $\leftarrow$ CHUNK
-			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
 			\For{i = 0 to capacity} 
-			\State \verb|#pragma omp for schedule(dynamic,chunk)|
 			\State created\textunderscore array = rand() \% 10
 			\EndFor
 			\State \Return arrayInfo \\
+			\EndFunction
 			%\EndProcedure \\
 		\caption{Array Generation}
 		\label{alg:0}
@@ -238,11 +203,8 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 	\begin{algorithmic}
 			%\Procedure{arrayContainer}{}\Comment{}
 			\Function{initializeZero}{arrayContainer, arrayInfo}
-			\State chunk = CHUNK
-			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
 			\For{i = 0 to arrayInfo.array\textunderscore capacity} 
-			\State \verb|#pragma omp for schedule(dynamic,chunk)|
-			\State  arrayInfo.\textunderscore array\textunderscore ptr[i] = 0
+			\State  arrayInfo.\textunderscore array\textunderscore ptr[i] $\leftarrow$ 0
 			\EndFor
 			\EndFunction
 			\State \Return arrayInfo \\
@@ -258,12 +220,9 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			%\Procedure{arrayContainer}{}\Comment{}
 			\Function{uniformOne}{arrayContainer, arrayInfo}
 			\State amount\textunderscore to\textunderscore set $\leftarrow$ arrayInfo.\textunderscore array\textunderscore capacity / 10
-			\State spacing == 10
-			\State chunk $\leftarrow$ CHUNKSIZE
-			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
+			\State spacing = 10
 			\For{i = 0 to amount\textunderscore to\textunderscore set} 
-			\State \verb|#pragma omp for schedule(dynamic,chunk)|
-			\State arrayInfo.array\textunderscore ptr[i * spacing] == 1
+			\State arrayInfo.array\textunderscore ptr[i * spacing] $\leftarrow$ 1
 			\EndFor
 			\EndFunction
 			\State \Return arrayInfo \\
@@ -282,7 +241,7 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 		%\Procedure{arrayContainer}{}\Comment{}
 		\Function{isValueInArray}{array[], value, array\textunderscore size}
 		\For{i = 0 to array\textunderscore size}
-		\If{array[i] == value}
+		\If{array[i] is equal to value}
 		\State \Return True
 		\EndIf
 		\State \Return False
@@ -292,13 +251,13 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 		\Function{uniformRandom}{arrayContainer, arrayInfo}
 		\State amount\textunderscore to\textunderscore print $\leftarrow$ arrayInfo.array\textunderscore capacity / 20
 		\State random\textunderscore indices[amount\textunderscore to\textunderscore print];
-		\State spacing == 20
+		\State spacing = 20
 		\State random\textunderscore index $\leftarrow$ rand() \% dimensions[0]
 		\State dimension\textunderscore capacity\textunderscore array $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int))
 		\State array\textunderscore coordinates $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int))
-		\State dimension\textunderscore capacity == 1
+		\State dimension\textunderscore capacity = 1
 		\For{i =0 to amount\textunderscore to\textunderscore print}
-		\While{isValueInArray(random\textunderscore indices, random\textunderscore index, i) == true}
+		\While{isValueInArray(random\textunderscore indices, random\textunderscore index, i) is true}
 		\State random\textunderscore index $\leftarrow$ rand() \% arrayInfo.array\textunderscore capacity
 		\State random\textunderscore indices[i] $\leftarrow$ random\textunderscore index;
 		\EndWhile
@@ -346,6 +305,36 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 	\end{algorithmic}
 \end{algorithm}
 
+\section{PThread and OpenMP Libraries}
+In complying with the outcomes for the laboratory, the following research regarding the PThread and OpenMP libraries was done.
+
+\subsection{PThread Library}
+PThreads is a standardized model for dividing a program into parallel tasks \cite{pthreads}. PThreads was defined by the IEEE POSIX operating system interface standards \cite{pthreads}. The PThreads library specifies the interface to manage the actions required by threads \cite{pthreadVSopen}.
+
+\subsubsection{Disadvantages}
+%~\\
+%~\\
+In order to use the PThreads library, the code must be written specifically for the library \cite{pthreadVSopen}. This involves the use of PThread specific functions and data structures. The implication of this is that once the library has been used, the application is inherently casted as a threaded model \cite{pthreadVSopen}. Furthermore, since the API is very low level, large amounts of complex code is required to perform simple threading tasks \cite{pthreadVSopen}. The developer is also required to control all stages of the threading process, such as implicitly stating the number of threads and terminating them after the parallel block has executed \cite{pthreadVSopen}.
+
+\subsubsection{Advantages}
+%~\\
+%~\\
+Owing to the inherently low-level API of the PThreads library, extensive control over all aspects of the program is provided~\cite{pthreadVSopen}. This is advantageous in applications which require low-level control.
+
+\subsection{OpenMP Library}
+The OpenMP library was developed to provide an API which could run the same code base, equally well, across a range of operating systems~\cite{pthreadVSopen}. The OpenMP library takes the form of a set of compiler directives (pragmas) which are operating system-specific~\cite{pthreadVSopen}. Through the sensible use of OpenMP pragmas, a single threaded program can be parallelised while maintaining its serial structure~\cite{kuhn2000openmp,pthreadVSopen}.
+
+\subsubsection{Advantages}
+%~\\
+%~\\
+If a compiler does not recognise an OpenMP pragma it is ignored~\cite{HPC}. As a result, a level of security exists where code containing these library-specific directives can be compiled by a different toolset, without concerns of it breaking~\cite{pthreadVSopen}. Additionally, by disabling support for OpenMP, the code can be compiled as a single-threaded program and debugged with relative ease~\cite{pthreadVSopen}.
+
+Unlike PThreads, OpenMP does not lock the software into a set number of threads for a particular application. In this way the number of threads is determined at run-time and can be scaled according to hardware availability~\cite{pthreadVSopen}.
+
+\subsubsection{Disadvantages}
+%~\\
+%~\\
+If a finer level of control is required, developers can access OpenMP's threading API. At this level, the functionality provided by the OpenMP API is a small in comparison to that of PThreads~\cite{pthreadVSopen}. A far smaller range of primitive functions exist which are needed to achieve a fine-grained level of control~\cite{pthreadVSopen}.
 \end{appendix}
 
 
