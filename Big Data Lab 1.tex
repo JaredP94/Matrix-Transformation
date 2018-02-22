@@ -127,6 +127,8 @@
 \section{Problem Solution}
 In order to avoid repetition in calculating the capacity of the matrix, a \texttt{struct} was created which holds the one-dimensional array, the capacity of the array and the number of dimensions in the required matrix. This \texttt{struct} acts as the input to procedures one and two. Procedure three take the \texttt{struct} as an input as well as an array containing the dimensions of the original matrix.
 
+For each of the test matrices, each of the functions containing the procedures is called. After the three functions have been called on a matrix, the memory is cleared prior to creating the next matrix.
+
 \subsection{Matrix Generation}
 In order to bypass the problem of requiring a \texttt{for} loop for each dimension of the array, the K-dimensional array with bounds \textit{N$_0$, N$_1$,...N$_{k-1}$} was converted into a one-dimensional (1D) array, with the number of elements (N) determined by Equation \ref{noOfElements}. The memory for the array was allocated on the heap using \texttt{malloc()}. The memory for the array was created such that it could hold N integer values.
 
