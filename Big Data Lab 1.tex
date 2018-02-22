@@ -15,7 +15,7 @@
 \usepackage[super]{nth}
 \usepackage{subcaption}
 \usepackage{listings}
-\usepackage{amsmath}
+\usepackage{amsmath,amsfonts,amssymb}
 \usepackage{epstopdf}
 \usepackage{xcolor}
 \usepackage{textcomp}
@@ -26,10 +26,12 @@
 \usepackage{changes}
 \usepackage{makecell}
 \usepackage{verbatim}
-\usepackage{algorithm,algpseudocode}
 \usepackage{balance}
 \usepackage{pdfpages}
 \usepackage{ragged2e}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
 \usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
 \definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
 \definecolor{mylilas}{RGB}{170,55,241}
@@ -133,7 +135,149 @@ In order to use the PThreads library, the code must be written specifically for 
 \bibliographystyle{witseie}
 \bibliography{dataLab1}
 
+\newpage
+\onecolumn
+
+\begin{appendix}
+	
+\section{Pseudo-code}
+
+	\begin{algorithm}[htbp]
+		\begin{algorithmic}
+			%\Procedure{arrayContainer}{}\Comment{}
+			\\
+			\State array\textunderscore ptr;
+			\State array\textunderscore capacity;
+			\State number\textunderscore of\textunderscore dimensions;
+			%\EndProcedure
+			\\
+			
+%------------------------------------------------------------------------------
+			
+			\Function{generateArray}{dimensions, dimension\textunderscore length}
+			\State capacity == 1;
+			\State srand(time(NULL));
+			\For{i = 0 to dimension\textunderscore length} 
+			\State capacity = capacity * dimensions[i];
+			\EndFor
+			\State created\textunderscore array = malloc(capacity * sizeof(int));
+			\If{created\textunderscore array is equal to null}
+			\State catch error
+			\EndIf
+			\EndFunction
+			\State \Return ArrayContainer \\
+			
+%------------------------------------------------------------------------------			
+			%\Procedure{arrayInfo}{created\textunderscore array, \textunderscore capacity, dimension\textunderscore length}\Comment{}
+			\State chunk $\leftarrow$ CHUNK
+			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
+			\For{i = 0 to capacity} 
+			\State \verb|#pragma omp for schedule(dynamic,chunk)|
+			\State created\textunderscore array = rand() \% 10;
+			\EndFor
+			\State \Return arrayInfo \\
+			%\EndProcedure \\
+			
+%------------------------------------------------------------------------------
+			%\Procedure{arrayContainer}{}\Comment{}
+			\Function{initializeZero}{arrayContainer, arrayInfo}
+			\State chunk = CHUNK
+			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
+			\For{i = 0 to arrayInfo.array\textunderscore capacity} 
+			\State \verb|#pragma omp for schedule(dynamic,chunk)|
+			\State  arrayInfo.\textunderscore array\textunderscore ptr[i] = 0;
+			\EndFor
+			\EndFunction
+			\State \Return arrayInfo \\
+			%\EndProcedure \\
+			
+%------------------------------------------------------------------------------
+
+			%\Procedure{arrayContainer}{}\Comment{}
+			\Function{uniformOne}{arrayContainer, arrayInfo}
+			\State amount\textunderscore to\textunderscore set $\leftarrow$ arrayInfo.\textunderscore array\textunderscore capacity / 10;
+			\State spacing $\leftarrow$ arrayInfo.array/amount\textunderscore to\textunderscore set;
+			\State chunk $\leftarrow$ CHUNKSIZE
+			\State \verb|#pragma omp parallel shared(arrayInfo,chunk)|
+			\For{i = 0 to amount\textunderscore to\textunderscore set} 
+			\State \verb|#pragma omp for schedule(dynamic,chunk)|
+			\State arrayInfo.array\textunderscore ptr[i * spacing] == 1;
+			\EndFor
+			\EndFunction
+			\State \Return arrayInfo \\
+			%\EndProcedure \\
+			
+%------------------------------------------------------------------------------
+			\caption{Procedure 1}
+			\label{alg:2}
+		\end{algorithmic}
+	\end{algorithm}
+
+\begin{algorithm}[htbp]
+	\begin{algorithmic}
+		%\Procedure{arrayContainer}{}\Comment{}
+		\Function{uniformOne}{arrayContainer, arrayInfo}
+		\State amount\textunderscore to\textunderscore print $\leftarrow$ arrayInfo.array\textunderscore capacity / 20;
+		\State spacing $\leftarrow$ arrayInfo.array/amount\textunderscore to\textunderscore print;
+		\State random\textunderscore index $\leftarrow$ rand() % dimensions[0];
+		\State dimension\textunderscore capacity\textunderscore array $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int));
+		\State array\textunderscore coordinates $\leftarrow$ malloc(arrayInfo.array\textunderscore capacity * sizeof(int));
+		\State dimension\textunderscore capacity == 1;
+		\For{i = 0 to arrayinfo.number\textunderscore of\textunderscore dimensions} 
+		\State dimension\textunderscore capacity\textunderscore array[i] $\leftarrow$ dimension\textunderscore capacity *  dimensions[i];
+		\State dimension\textunderscore capacity $\leftarrow$ dimension\textunderscore capacity * dimensions[i];
+		\EndFor
+		\Function{memset}{array\textunderscore coordinates, 0, sizeof arrayInfo.number\textunderscore of\textunderscore dimensions}
+		\EndFunction
+		\State print Format = [coords] : [value]
+		\For{i = 0 to amount\textunderscore to\textunderscore print}
+		\State target\textunderscore index $\leftarrow$ random\textunderscore index + i * spacing;
+		\For{j = arrayInfo.number\textunderscore of\textunderscore dimensions to 0}
+		\If{target\textunderscore index/dimension\textunderscore capacity\textunderscore array[j-1] 	$>$ 0}
+		\State array\textunderscore coordinates[j] $\leftarrow$ target\textunderscore index/dimension\textunderscore capacity\textunderscore array[j-1];
+		\State target\textunderscore index $\leftarrow$ target\textunderscore index - (array\textunderscore coordinates[j] $\times$ \textunderscore dimension\textunderscore capacity\textunderscore array[j-1]);
+		\EndIf
+		\State array\textunderscore coordinates[0] $\leftarrow$ target\textunderscore index;
+		\EndFor
+		\For{k = 0 to arrayInfo.number\textunderscore of\textunderscore dimensions}
+		\State print array\textunderscore coordinates[k]
+		\EndFor
+		\EndFor
+		\State \Return arrayInfo 
+		\EndFunction \\
+		%\EndProcedure \\
+		
+		\Function{main}{}
+		\State dimensions[] == [6,6,6]
+		\State arrayContainer generated\textunderscore array $\leftarrow$ generateArray(dimensions, sizeof(dimensions)/sizeof(dimensions[0]));
+		\State generated\textunderscore array $\leftarrow$ initializeZero(generated\textunderscore array);
+		\State generated\textunderscore array $\leftarrow$ uniformOne(generated\textunderscore array);
+		\State generated\textunderscore array $\leftarrow$ uniformRandomOne(generated\textunderscore array, dimensions);
+		\State free(generated\textunderscore array.array\textunderscore ptr);
+		\EndFunction
+		
+		
+		\caption{Procedure 2}
+		\label{alg:1}
+	\end{algorithmic}
+\end{algorithm}
+
+\end{appendix}
+
+
+
+
 \end{document}
+
+%		\State power = 0
+%\For {number of syndromes}
+%\State syndrome = 0;
+%\For {i = 0 to length of code word}
+%\State syndrome = syndrome + coefficient at i$\times\alpha^{\text{power}^{\text{i}}}$	
+%\EndFor
+%\State power = power + 1
+%\EndFor
+%\State \Return List of syndromes
 
 " vim: ts=4
 " vim: tw=78
