@@ -94,7 +94,7 @@
 \begin{minipage}{0.4\textwidth}
 	\begin{flushright} \large
 		%	\emph{Author:}\\
-		Jared Ping \\
+		Jared Ping \\ 704447
 	\end{flushright}
 \end{minipage}\\[1cm]
 
@@ -108,15 +108,19 @@
 \begin{minipage}{0.4\textwidth}
 	\begin{flushright} \large
 		%		\emph{Author:} \\
-		Matthew van Rooyen \\ 
+		Matthew van Rooyen \\ 706692
 	\end{flushright}
 \end{minipage}\\[1cm]
 		
+		
+	
+{\large Date Handed In: \nth{23} February, 2018}\\[1cm] 
+	
 \end{titlepage}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\thispagestyle{empty}
+
 \pagestyle{plain}
 \setcounter{page}{1}
 
@@ -128,7 +132,61 @@
 \subsection{PThread Library}
 PThreads is a standardized model for dividing a program into parallel tasks \cite{pthreads}. PThreads was defined by the IEEE POSIX operating system interface standards \cite{pthreads}. The PThreads library specifies the interface to manage the actions required by threads \cite{pthreadVSopen}.
 
-In order to use the PThreads library, the code must be written specifically for the library \cite{pthreadVSopen}. This involves the use of PThread specific functions and data structures. The implication of this is that once the library has been used, the application becomes threaded
+\subsubsection{Disadvantages}
+%~\\
+%~\\
+In order to use the PThreads library, the code must be written specifically for the library \cite{pthreadVSopen}. This involves the use of PThread specific functions and data structures. The implication of this is that once the library has been used, the application is inherently casted as a threaded model \cite{pthreadVSopen}. Furthermore, since the API is very low level, large amounts of complex code is required to perform simple threading tasks \cite{pthreadVSopen}. The developer is also required to control all stages of the threading process, such as implicitly stating the number of threads and terminating them after the parallel block has executed \cite{pthreadVSopen}.
+
+\subsubsection{Advantages}
+%~\\
+%~\\
+Owing to the inherently low-level API of the PThreads library, extensive control over all aspects of the program is provided~\cite{pthreadVSopen}. This is advantageous in applications which require low-level control.
+
+\subsection{OpenMP Library}
+The OpenMP library was developed to provide an API which could run the same code base, equally well, across a range of operating systems~\cite{pthreadVSopen}. The OpenMP library takes the form of a set of compiler directives (pragmas) which are operating system-specific~\cite{pthreadVSopen}. Through the sensible use of OpenMP pragmas, a single threaded program can be parallelised while maintaining its serial structure~\cite{kuhn2000openmp,pthreadVSopen}.
+
+\subsubsection{Advantages}
+%~\\
+%~\\
+If a compiler does not recognise an OpenMP pragma it is ignored~\cite{HPC}. As a result, a level of security exists where code containing these library-specific directives can be compiled by a different toolset, without concerns of it breaking~\cite{pthreadVSopen}. Additionally, by disabling support for OpenMP, the code can be compiled as a single-threaded program and debugged with relative ease~\cite{pthreadVSopen}.
+
+Unlike PThreads, OpenMP does not lock the software into a set number of threads for a particular application. In this way the number of threads is determined at run-time and can be scaled according to hardware availability~\cite{pthreadVSopen}.
+
+\subsubsection{Disadvantages}
+%~\\
+%~\\
+If a finer level of control is required, developers can access OpenMp's threading API. At this level, the functionality provided by the OpenMP API is a small in comparison to that of PThreads~\cite{pthreadVSopen}. A far smaller range of primitive functions exist which are needed to achieve a fine-grained level of control~\cite{pthreadVSopen}.
+
+\section{Problem Solution}
+
+\subsection{Matrix Generation}
+In order to bypass the problem of requiring a \texttt{for} loop for each dimension of the array, the K-dimensional array with bounds \textit{N$_0$, N$_1$,...N$_{k-1}$} was converted into a one-dimensional (1D) array, with the number of elements (N) determined by Equation \ref{noOfElements}. The memory for the array was allocated on the heap using \texttt{malloc()}. The memory for the array was created such that it could hold N integer values.
+
+\begin{equation}
+N = \prod_{n=0}^{k-1}N_{n}
+\label{noOfElements}
+\end{equation}
+
+\subsection{Procedure 1}
+Since the K-dimensional array was converted into a 1D array, a simple \texttt{for} loop was used to set the values in the array to zero. The loop spans from 0 to N (as defined in Equation \ref{noOfElements}), and sets the value of the array at the corresponding index to zero. This loop is performed in parallel using static scheduling, since each loop takes a uniform amount of time \cite{HPC}.
+
+\subsection{Procedure 2}
+In this procedure, the value of 10\% of the elements in the array is set uniformly to 1. The assumption made was that starting at the first element of the 1D array, every tenth element is set to 1. This means that there is a uniform spacing of 9 elements between every two entries with a value of 1. This was achieved using a \texttt{for} loop. This loop was also run in parallel, using static scheduling. 
+
+\subsection{Procedure 3}
+Since 5\% of the elements must be selected, it is necessary to calculate the number of data points to be printed. In order to do this, N is divided by 20.
+
+A random number is then generated between 0 and N-1. This random number acts as the index in the 1D array of the value that should be printed. This index is then added to an array containing all the randomly generated indices. In order to ensure that one element is not printed multiple times, as each random index is generated, it is compared to each other index. If the two indices are the same, a new random number is generated and the process is repeated for the number of data points required.
+
+Once the index is calculated, the set of coordinates corresponding to the index must be calculated. A column-major indexing approach was used, as it simplified the implementation \cite{HPC}. This choice incurs no performance loss, since the input array to the function is one-dimensional (as created in the matrix generation procedure). However, if operations were required on a multidimensional array that had not been converted into a one-dimensional array, a row-major indexing scheme should be used in C, as the use thereof allows for stride-one access between entries in the array \cite{HPC}. This drastically improves performance for large matrices \cite{HPC}. Using column major indexing, the left-hand coordinate is the least significant coordinate, and the right hand coordinate is the most significant. Based on the column major indexing, the coordinates were calculated and displayed as follows:
+
+\begin{enumerate}
+	\item Calculate the maximum amount of elements per dimension
+	\item Calculate the coordinates from most significant to least significant using the maximum number of elements per dimension
+	\item Print the coordinates from least significant to most significant
+\end{enumerate}
+
+This process is expanded upon using the sudo code in Appendix TODO:Fill in appendix.
 
 \section{Conclusion}
 
