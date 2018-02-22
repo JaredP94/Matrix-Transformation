@@ -202,13 +202,6 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 
 	\begin{algorithm}[htbp]
 		\begin{algorithmic}
-			%\Procedure{arrayContainer}{}\Comment{}
-			\\
-			\State array\textunderscore ptr;
-			\State array\textunderscore capacity;
-			\State number\textunderscore of\textunderscore dimensions;
-			%\EndProcedure
-			\\
 			
 %------------------------------------------------------------------------------
 			
@@ -235,8 +228,14 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			\EndFor
 			\State \Return arrayInfo \\
 			%\EndProcedure \\
+		\caption{Array Generation}
+		\label{alg:0}
+	\end{algorithmic}
+\end{algorithm}
 			
 %------------------------------------------------------------------------------
+	\begin{algorithm}[htbp]
+	\begin{algorithmic}
 			%\Procedure{arrayContainer}{}\Comment{}
 			\Function{initializeZero}{arrayContainer, arrayInfo}
 			\State chunk = CHUNK
@@ -248,9 +247,14 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			\EndFunction
 			\State \Return arrayInfo \\
 			%\EndProcedure \\
+		\caption{Procedure 1}
+		\label{alg:1}
+	\end{algorithmic}
+\end{algorithm}
 			
 %------------------------------------------------------------------------------
-
+\begin{algorithm}[htbp]
+	\begin{algorithmic}
 			%\Procedure{arrayContainer}{}\Comment{}
 			\Function{uniformOne}{arrayContainer, arrayInfo}
 			\State amount\textunderscore to\textunderscore set $\leftarrow$ arrayInfo.\textunderscore array\textunderscore capacity / 10;
@@ -264,17 +268,19 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 			\EndFunction
 			\State \Return arrayInfo \\
 			%\EndProcedure \\
+		\caption{Procedure 2}
+		\label{alg:2}
+	\end{algorithmic}
+\end{algorithm}
+
 			
 %------------------------------------------------------------------------------
-			\caption{Procedure 1}
-			\label{alg:2}
-		\end{algorithmic}
-	\end{algorithm}
+
 
 \begin{algorithm}[htbp]
 	\begin{algorithmic}
 		%\Procedure{arrayContainer}{}\Comment{}
-		\Function{uniformOne}{arrayContainer, arrayInfo}
+		\Function{uniformRandom}{arrayContainer, arrayInfo}
 		\State amount\textunderscore to\textunderscore print $\leftarrow$ arrayInfo.array\textunderscore capacity / 20;
 		\State spacing $\leftarrow$ arrayInfo.array/amount\textunderscore to\textunderscore print;
 		\State random\textunderscore index $\leftarrow$ rand() % dimensions[0];
@@ -304,7 +310,13 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 		\State \Return arrayInfo 
 		\EndFunction \\
 		%\EndProcedure \\
-		
+		\caption{Procedure 3}
+		\label{alg:3}
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+	\begin{algorithmic}
 		\Function{main}{}
 		\State dimensions[] == [6,6,6]
 		\State arrayContainer generated\textunderscore array $\leftarrow$ generateArray(dimensions, sizeof(dimensions)/sizeof(dimensions[0]));
@@ -313,10 +325,8 @@ This process is expanded upon using the sudo code in Appendix TODO:Fill in appen
 		\State generated\textunderscore array $\leftarrow$ uniformRandomOne(generated\textunderscore array, dimensions);
 		\State free(generated\textunderscore array.array\textunderscore ptr);
 		\EndFunction
-		
-		
-		\caption{Procedure 2}
-		\label{alg:1}
+		\caption{Main Function}
+		\label{alg:4}
 	\end{algorithmic}
 \end{algorithm}
 
