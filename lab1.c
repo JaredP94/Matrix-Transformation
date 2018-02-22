@@ -3,9 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-#include "omp.h"
 
-#define CHUNKSIZE 100
 struct arrayContainer
 {
     int * _array_ptr;
@@ -39,14 +37,9 @@ struct arrayContainer generateArray(int dimensions[], int dimension_length)
 
 struct arrayContainer initializeZero(struct arrayContainer arrayInfo)
 {
-    int chunk = CHUNKSIZE;
-    #pragma omp parallel shared(arrayInfo,chunk)// Start of parallel region
+    for (int i = 0; i < arrayInfo._array_capacity; i++)
     {
-        #pragma omp for schedule(static,chunk)
-        for (int i = 0; i < arrayInfo._array_capacity; i++)
-        {
-            arrayInfo._array_ptr[i] = 0;
-        }
+        arrayInfo._array_ptr[i] = 0;
     }
 
     return arrayInfo;
@@ -56,14 +49,10 @@ struct arrayContainer uniformOne(struct arrayContainer arrayInfo)
 {
     const int _amount_to_set = arrayInfo._array_capacity / 10;
     const int _spacing = 10;
-    int chunk = CHUNKSIZE;
-    #pragma omp parallel shared(arrayInfo,chunk) // Start of parallel region
+
+    for (int i = 0; i < _amount_to_set; i++)
     {
-        #pragma omp for schedule(static,chunk)
-        for (int i = 0; i < _amount_to_set; i++)
-        {
-            arrayInfo._array_ptr[i * _spacing] = 1;
-        }
+        arrayInfo._array_ptr[i * _spacing] = 1;
     }
 
     return arrayInfo;
@@ -114,7 +103,7 @@ struct arrayContainer uniformRandom(struct arrayContainer arrayInfo, int dimensi
     memset(_array_coordinates, 0, sizeof arrayInfo._number_of_dimensions);
 
     // Calculate coords based on index from 1D array
-    printf("Format = [coords] : [value] \n");
+    printf("Format = Iteration : [coords] : [value] \n");
     for (int i = 0; i < _amount_to_print; i++)
     {
         int _target_index = _random_indices[i];
@@ -130,13 +119,13 @@ struct arrayContainer uniformRandom(struct arrayContainer arrayInfo, int dimensi
 
         _array_coordinates[0] = _target_index;
 
-        printf("Iteration %d: [ ", i+_index_increment);
+        printf("%d: \t [ ", i+_index_increment);
         for (int k = 0; k < arrayInfo._number_of_dimensions; k++)
         {
             printf("%d ", _array_coordinates[k]);
         }
 
-        printf("] : [ %d ] \n", arrayInfo._array_ptr[_random_indices[i]]);
+        printf("] \t : \t[ %d ] \n", arrayInfo._array_ptr[_random_indices[i]]);
     }
 
     return arrayInfo;
@@ -144,13 +133,38 @@ struct arrayContainer uniformRandom(struct arrayContainer arrayInfo, int dimensi
 
 int main() {
         srand((unsigned int)time(NULL));
-        int _dimensions[]={10,10,10};
-        struct arrayContainer _generated_array = generateArray(_dimensions, sizeof(_dimensions)/sizeof(int));
-        _generated_array = initializeZero(_generated_array);
-        _generated_array = uniformOne(_generated_array);
-        _generated_array = uniformRandom(_generated_array, _dimensions);
+
+        int _dimensions0[]={100,100};
+        struct arrayContainer _generated_array0 = generateArray(_dimensions0, sizeof(_dimensions0)/sizeof(int));
+        _generated_array0 = initializeZero(_generated_array0);
+        _generated_array0 = uniformOne(_generated_array0);
+        _generated_array0 = uniformRandom(_generated_array0, _dimensions0);
             /* Free the memory we allocated */
-        free(_generated_array._array_ptr);
+        free(_generated_array0._array_ptr);
+
+        int _dimensions1[]={100,100,100};
+        struct arrayContainer _generated_array1 = generateArray(_dimensions1, sizeof(_dimensions1)/sizeof(int));
+        _generated_array1 = initializeZero(_generated_array1);
+        _generated_array1 = uniformOne(_generated_array1);
+        _generated_array1 = uniformRandom(_generated_array1, _dimensions1);
+            /* Free the memory we allocated */
+        free(_generated_array1._array_ptr);
+
+        int _dimensions2[]={50,50,50,50};
+        struct arrayContainer _generated_array2 = generateArray(_dimensions2, sizeof(_dimensions2)/sizeof(int));
+        _generated_array2 = initializeZero(_generated_array2);
+        _generated_array2 = uniformOne(_generated_array2);
+        _generated_array2 = uniformRandom(_generated_array2, _dimensions2);
+            /* Free the memory we allocated */
+        free(_generated_array2._array_ptr);
+
+        int _dimensions3[]={20,20,20,20,20};
+        struct arrayContainer _generated_array3 = generateArray(_dimensions3, sizeof(_dimensions3)/sizeof(int));
+        _generated_array3 = initializeZero(_generated_array3);
+        _generated_array3 = uniformOne(_generated_array3);
+        _generated_array3 = uniformRandom(_generated_array3, _dimensions1);
+            /* Free the memory we allocated */
+        free(_generated_array3._array_ptr);
 
         return 0;
 }
